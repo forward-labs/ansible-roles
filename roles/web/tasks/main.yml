@@ -5,3 +5,5 @@
 - include: setup_nginx.yml
 - include: setup_gunicorn.yml
 - include: setup_supervisord.yml
+- include: setup_rabbitmq.yml
+  when: not local
