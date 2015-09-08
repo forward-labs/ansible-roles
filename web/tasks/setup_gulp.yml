@@ -1,0 +1,12 @@
+---
+
+- name: Install node.js
+  yum: name={{ item }} state=latest enablerepo=epel
+  sudo: true
+  with_items:
+    - nodejs
+    - npm
+
+- name: Install gulp globally
+  npm: name=gulp global=yes
+  sudo: true
