@@ -1,0 +1,8 @@
+---
+
+- include: configure_system.yml
+- include: install_git.yml
+- include: create_users_and_groups.yml
+- include: configure_ntp.yml
+- include: configure_epel.yml
+- include: disable_firewall.yml
