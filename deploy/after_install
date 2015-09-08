@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Activate virtualenv.
+source /data/env/edgeretreats/bin/activate
+
+# install requirements
+cd /data/www/edge/ && pip install -r /data/www/edge/requirements.txt
+
+# update npm packages
+cd /data/www/edge/ && npm install
+
+# run migrations
+/data/www/edge/manage.py migrate
+
+# run gulp
+cd /data/www/edge/ && ./node_modules/gulp/bin/gulp.js production
+
+# collect static files
+/data/www/edge/manage.py collectstatic --noinput
+
+# run compressor
+/data/www/edge/manage.py compress --force
+
+# update ES index
+/data/www/edge/manage.py rebuild_index --noinput
+
+# restart celery
+/usr/local/bin/supervisorctl -c /etc/supervisord.conf restart edgeretreats_celery
+
+# restart application server
+/usr/local/bin/supervisorctl -c /etc/supervisord.conf restart edgeretreats

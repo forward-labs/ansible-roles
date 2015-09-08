@@ -1,0 +1,26 @@
+---
+
+- name: Install supervisor
+  easy_install: name=supervisor
+  sudo: true
+  when: not local
+
+- name: Copy supervisor configuration
+  template: src=supervisord.conf.j2 dest=/etc/supervisord.conf
+  sudo: true
+  when: not local
+
+- name: Copy supervisord daemon file
+  copy: src=supervisord dest=/etc/init.d/supervisord owner=root group=root mode=0744
+  sudo: true
+  when: not local
+
+- name: Create celery log folder
+  sudo: true
+  file: path=/var/log/celery/ owner={{ project_user_username }} group={{ project_user_group }} state=directory recurse=yes
+  when: not local
+
+- name: Ensure supervisord is running
+  service: name=supervisord state=started enabled=true
+  sudo: true
+  when: not local
