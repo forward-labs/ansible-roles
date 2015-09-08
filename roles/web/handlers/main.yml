@@ -3,3 +3,11 @@
 - name: Restart nginx
   action: service name=nginx state=restarted
   sudo: true
+
+- name: Restart Elasticsearch
+  service: name=elasticsearch state=restarted
+  sudo: true
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+  sudo: true

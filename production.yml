@@ -1,6 +1,6 @@
 ---
     
-- name: Provision a production server
+- name: Provision a production web server
   hosts:
       - web
   sudo_user: root
@@ -10,3 +10,15 @@
   roles:
       - common
       - web
+
+- name: Provision a production Elasticsearch server
+  hosts:
+      - elasticsearch
+  sudo_user: root
+  vars_files:
+      - env_vars/base.yml
+      - env_vars/production.yml
+      - env_vars/elasticsearch.yml
+  roles:
+      - common
+      - elasticsearch

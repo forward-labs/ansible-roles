@@ -1,0 +1,11 @@
+---
+# Elasticsearch Ansible Variables
+
+elasticsearch_cluster_name: edge
+#elasticsearch_network_bind_host: 0.0.0.0
+#elasticsearch_network_http_port: 9200
+elasticsearch_user: elasticsearch
+elasticsearch_group: elasticsearch
+elasticsearch_plugins:
+  - { name: 'mobz/elasticsearch-head' }
+  - { name: 'royrusso/elasticsearch-HQ' }

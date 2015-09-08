@@ -6,7 +6,9 @@
   vars_files:
       - env_vars/base.yml
       - env_vars/local.yml
+      - env_vars/elasticsearch.yml
   roles:
       - common
       - web
       - db
+      - elasticsearch
