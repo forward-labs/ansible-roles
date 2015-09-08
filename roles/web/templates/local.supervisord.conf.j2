@@ -1,0 +1,37 @@
+[program:django]
+command=/data/env/edgeretreats/bin/python manage.py runserver
+directory=/data/www/edge
+environment=DEBUG=true
+user=vagrant
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+stdout_logfile=/var/log/edgeretreats/django.log
+redirect_stderr=true
+
+[program:celery]
+command=/data/env/edgeretreats/bin/celery -A edge worker -B --loglevel=INFO
+directory=/data/www/edge
+environment=DEBUG=true
+user=vagrant
+stdout_logfile=/var/log/edgeretreats/celery.log
+redirect_stderr=true
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs=600
+killasgroup=true
+
+[program:gulp]
+command=/usr/bin/gulp
+directory=/data/www/edge
+environment=
+user=vagrant
+stdout_logfile=/var/log/edgeretreats/gulp.log
+redirect_stderr=true
+autostart=true
+autorestart=true
+
+[group:edgeretreats]
+programs=django,celery,gulp

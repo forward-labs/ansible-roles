@@ -1,0 +1,36 @@
+[program:django]
+command=/data/env/edgeretreats/bin/newrelic-admin run-program /data/env/edgeretreats/bin/python /data/env/edgeretreats/bin/gunicorn edgeretreats.wsgi -c /etc/gunicorn.conf
+directory=/data/www/edge
+environment=BASE_URL="https://edgeretreats.com",DB_HOST="edgeretreats.cea1ubaxj9ok.us-east-1.rds.amazonaws.com",REDIS_HOST="edgeretreats.tjlxpb.0001.use1.cache.amazonaws.com",NEW_RELIC_CONFIG_FILE="/etc/newrelic.ini"
+user=ec2-user
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/edgeretreats/django.log
+redirect_stderr=true
+
+[program:celery]
+command=/data/env/edgeretreats/bin/newrelic-admin run-program /data/env/edgeretreats/bin/celery -A edgeretreats worker --loglevel=INFO
+directory=/data/www/edge
+environment=BASE_URL="https://edgeretreats.com",DB_HOST="edgeretreats.cea1ubaxj9ok.us-east-1.rds.amazonaws.com",REDIS_HOST="edgeretreats.tjlxpb.0001.use1.cache.amazonaws.com",NEW_RELIC_CONFIG_FILE="/etc/newrelic.ini"
+user=ec2-user
+numprocs=1
+stdout_logfile=/var/log/edgeretreats/celery-worker.log
+stderr_logfile=/var/log/edgeretreats/celery-error.log
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs=600
+killasgroup=true
+
+[program:celerybeat]
+command=/data/env/edgeretreats/bin/celery -A edgeretreats beat
+directory=/data/www/edge
+environment=
+user=ec2-user
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/edgeretreats/celerybeat.log
+redirect_stderr=true
+
+[group:edgeretreats]
+programs=django,celery,celerybeat
