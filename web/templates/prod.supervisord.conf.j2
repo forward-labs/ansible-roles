@@ -1,0 +1,36 @@
+[program:django]
+command=/data/env/{{ project_name }}/bin/python /data/env/{{ project_name }}/bin/gunicorn {{ app_name }}.wsgi -c /etc/gunicorn.conf
+directory=/data/www/{{ project_name }}
+environment=BASE_URL="{{ project_domain }}",DB_HOST="{{ db_host }}",REDIS_HOST="{{ redis_host }}",NEW_RELIC_CONFIG_FILE="/etc/newrelic.ini"
+user={{ project_user_username }}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/{{ project_name }}/django.log
+redirect_stderr=true
+
+[program:celery]
+command=/data/env/{{ project_name }}/bin/celery -A {{ app_name }} worker --loglevel=INFO
+directory=/data/www/{{ project_name }}
+environment=BASE_URL="{{ project_domain }}",DB_HOST="{{ db_host }}",REDIS_HOST="{{ redis_host }}",NEW_RELIC_CONFIG_FILE="/etc/newrelic.ini"
+user={{ project_user_username }}
+numprocs=1
+stdout_logfile=/var/log/{{ project_name }}/celery-worker.log
+stderr_logfile=/var/log/{{ project_name }}/celery-error.log
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs=600
+killasgroup=true
+
+[program:celerybeat]
+command=/data/env/{{ project_name }}/bin/celery -A {{ app_name }} beat
+directory=/data/www/{{ project_name }}
+environment=
+user={{ project_user_username }}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/{{ project_name }}/celerybeat.log
+redirect_stderr=true
+
+[group:{{ project_name }}]
+programs=django,celery,celerybeat

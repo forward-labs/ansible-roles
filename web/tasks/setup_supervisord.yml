@@ -3,24 +3,33 @@
 - name: Install supervisor
   easy_install: name=supervisor
   sudo: true
-  when: not local
+
+- name: Create supervisor config directory
+  file: path=/etc/supervisor/conf.d state=directory
+  sudo: true
 
 - name: Copy supervisor configuration
-  template: src=supervisord.conf.j2 dest=/etc/supervisord.conf
+  copy: src=supervisord.conf dest=/etc/supervisord.conf
+  sudo: true
+
+- name: Copy supervisor local configuration
+  template: src=local.supervisord.conf.j2 dest=/etc/supervisor/conf.d/{{ project_name }}.conf
+  sudo: true
+  when: local
+
+- name: Copy supervisor production configuration
+  template: src=prod.supervisord.conf.j2 dest=/etc/supervisor/conf.d/{{ project_name }}.conf
   sudo: true
   when: not local
 
-- name: Copy supervisord daemon file
-  copy: src=supervisord dest=/etc/init.d/supervisord owner=root group=root mode=0744
+- name: Copy supervisord systemd config
+  copy: src=supervisor.service dest=/etc/systemd/system/supervisor.service owner=root group=root mode=0744
   sudo: true
-  when: not local
 
-- name: Create celery log folder
+- name: Create supervisor project log folder
   sudo: true
-  file: path=/var/log/celery/ owner={{ project_user_username }} group={{ project_user_group }} state=directory recurse=yes
-  when: not local
+  file: path=/var/log/{{ project_name }}/ owner={{ project_user_username }} group={{ project_user_group }} state=directory recurse=yes
 
 - name: Ensure supervisord is running
-  service: name=supervisord state=started enabled=true
+  service: name=supervisor state=started enabled=true
   sudo: true
-  when: not local

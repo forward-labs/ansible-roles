@@ -1,0 +1,37 @@
+[program:django]
+command=/data/env/{{ project_name }}/bin/python manage.py runserver
+directory=/data/www/{{ project_name }}
+environment=DEBUG=true
+user=vagrant
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+stdout_logfile=/var/log/{{ project_name }}/django.log
+redirect_stderr=true
+
+[program:celery]
+command=/data/env/{{ project_name }}/bin/celery -A {{ project_name }} worker -B --loglevel=INFO
+directory=/data/www/{{ project_name }}
+environment=DEBUG=true
+user=vagrant
+stdout_logfile=/var/log/{{ project_name }}/celery.log
+redirect_stderr=true
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs=600
+killasgroup=true
+
+[program:gulp]
+command=/usr/bin/gulp
+directory=/data/www/{{ project_name }}
+environment=
+user=vagrant
+stdout_logfile=/var/log/{{ project_name }}/gulp.log
+redirect_stderr=true
+autostart=true
+autorestart=true
+
+[group:{{ project_name }}]
+programs=django,celery,gulp
