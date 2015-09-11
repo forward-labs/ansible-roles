@@ -1,0 +1,60 @@
+---
+# Elasticsearch Ansible Tasks
+# Adapted from https://github.com/Traackr/ansible-elasticsearch
+
+# Install Java
+- name: Install dependencies
+  yum: pkg=java-1.7.0-openjdk state=present
+  sudo: true
+
+# Configure user and group
+- name: Configuring elasticsearch user
+  group: name={{ elasticsearch_group }}
+  sudo: true
+- name: Configuring elasticsearch group
+  user: name={{ elasticsearch_user }} group={{ elasticsearch_group }} createhome=no
+  sudo: true
+
+# Install elasticsearch Yum repo
+- name: Elasticsearch EPEL install
+  copy: src=elasticsearch-epel.repo
+        dest=/etc/yum.repos.d/
+        owner=root group=root mode=0644
+  sudo: true
+
+# Install elasticsearch
+- name: Install elasticsearch
+  yum: name=elasticsearch
+       enablerepo=elasticsearch-1.6
+       state=present
+  sudo: true
+
+# Install elasticsearch sysconfig
+- name: Install elasticsearch sysconfig
+  copy: src=elasticsearch-sysconfig
+        dest=/etc/sysconfig/elasticsearch
+        owner=root group=root mode=0644
+  sudo: true
+  notify: Restart Elasticsearch
+
+# Configure Elasticsearch Node
+- name: Configuring Elasticsearch Node
+  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch.yml owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
+  sudo: true
+  notify: Restart Elasticsearch
+
+- name: Patch systemd config to lock memory
+  lineinfile: dest=/usr/lib/systemd/system/elasticsearch.service regexp='^#LimitMEMLOCK=unlimited' line='LimitMEMLOCK=unlimited'
+  sudo: true
+  notify:
+    - Reload systemd
+    - Restart Elasticsearch
+
+# Install Other Generic Plugins
+- include: setup_elasticsearch_plugins.yml
+  when: (elasticsearch_plugins is defined)
+
+# Register Elasticsearch service to start on boot
+- name: Ensure Elasticsearch is started on boot
+  service: name=elasticsearch enabled=yes state=started
+  sudo: true
