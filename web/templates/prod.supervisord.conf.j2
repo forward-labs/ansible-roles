@@ -1,7 +1,7 @@
 [program:django]
 command=/data/env/{{ project_name }}/bin/python /data/env/{{ project_name }}/bin/gunicorn {{ app_name }}.wsgi -c /etc/gunicorn.conf
 directory=/data/www/{{ project_name }}
-environment=BASE_URL="{{ project_domain }}",DB_HOST="{{ db_host }}",REDIS_HOST="{{ redis_host }}",NEW_RELIC_CONFIG_FILE="/etc/newrelic.ini"
+environment={{ supervisor_environment }}
 user={{ project_user_username }}
 autostart=true
 autorestart=true
@@ -11,7 +11,7 @@ redirect_stderr=true
 [program:celery]
 command=/data/env/{{ project_name }}/bin/celery -A {{ app_name }} worker --loglevel=INFO
 directory=/data/www/{{ project_name }}
-environment=BASE_URL="{{ project_domain }}",DB_HOST="{{ db_host }}",REDIS_HOST="{{ redis_host }}",NEW_RELIC_CONFIG_FILE="/etc/newrelic.ini"
+environment={{ supervisor_environment }}
 user={{ project_user_username }}
 numprocs=1
 stdout_logfile=/var/log/{{ project_name }}/celery-worker.log
