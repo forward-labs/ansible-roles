@@ -16,4 +16,3 @@
 - name: set SELinux to permissive
   action: selinux policy=targeted state=permissive
   sudo: true
-  when: local
