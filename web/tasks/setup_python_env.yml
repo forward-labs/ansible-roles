@@ -7,6 +7,9 @@
     - python-devel
     - python-setuptools
     - postgresql-devel
+    - libjpeg-devel
+    - freetype-devel
+    - libpng-devel
   
 - name: Install virtualenv
   sudo: true
