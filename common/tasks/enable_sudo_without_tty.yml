@@ -1,0 +1,5 @@
+---
+
+- name: Allow sudo to be used without a TTY
+  lineinfile: dest=/etc/sudoers regexp=^Defaults.*requiretty line="#Defaults requiretty" state=present
+  sudo: true

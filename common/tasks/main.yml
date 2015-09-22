@@ -6,3 +6,4 @@
 - include: configure_ntp.yml
 - include: configure_epel.yml
 - include: disable_firewall.yml
+- include: enable_sudo_without_tty.yml
