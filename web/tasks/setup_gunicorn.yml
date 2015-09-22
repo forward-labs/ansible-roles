@@ -5,6 +5,10 @@
   sudo: true
   sudo_user: "{{ project_user_username }}"
   when: not local
+
+- name: Create gunicorn log folder
+  sudo: true
+  file: path=/var/log/gunicorn owner={{ project_user_username }} group={{ project_user_group }} state=directory recurse=yes
   
 - name: Copy gunicorn configuration
   template: src=gunicorn.conf.j2 dest=/etc/gunicorn.conf
