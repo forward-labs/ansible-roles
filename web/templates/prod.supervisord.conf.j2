@@ -27,7 +27,8 @@ killasgroup=true
 [program:celerybeat]
 command=/data/env/{{ project_name }}/bin/celery -A {{ app_name }} beat
 directory=/data/www/{{ project_name }}
-environment=
+environment={% for k,v in app_environment.iteritems() %}{{ k }}="{{ v }}",{% endfor %}
+
 user={{ project_user_username }}
 autostart=true
 autorestart=true
