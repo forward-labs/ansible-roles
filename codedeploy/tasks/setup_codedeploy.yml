@@ -1,0 +1,21 @@
+---
+
+- name: Install Ruby
+  action: yum name=ruby state=present
+  sudo: true
+
+- name: Symlink ruby binary to ruby2.0
+  file: src=/usr/bin/ruby dest=/usr/bin/ruby2.0 state=link
+  sudo: true
+
+- name: Retrieve CodeDeploy RPM
+  get_url: url=https://s3.amazonaws.com/aws-codedeploy-us-east-1/releases/codedeploy-agent-1.0-1.751.noarch.rpm dest=/tmp/codedeploy-agent-1.0-1.751.noarch.rpm
+  sudo: true
+
+- name: Install CodeDeploy
+  command: rpm -i --nodeps /tmp/codedeploy-agent-1.0-1.751.noarch.rpm creates=/opt/codedeploy-agent/bin/codedeploy-agent warn=false
+  sudo: true
+
+- name: Ensure CodeDeploy is running
+  service: name=codedeploy-agent state=started enabled=true
+  sudo: true
