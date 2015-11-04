@@ -9,6 +9,11 @@ server {
     client_max_body_size 4G;
     server_name {{ project_domain }};
 
+    # redirect to https
+    if ($http_x_forwarded_proto = 'http') {
+        return 301 https://{{ project_domain }}$request_uri;
+    }
+
     access_log      /var/log/nginx/{{ project_name }}.access.log main;
     error_log       /var/log/nginx/{{ project_name }}.error.log debug;
 
@@ -17,7 +22,7 @@ server {
     location /static/ {
         root {{ project_static_path }};
     }
-    
+
     location / {
         # checks for static file, if not found proxy to app
         try_files $uri @proxy_to_app;
