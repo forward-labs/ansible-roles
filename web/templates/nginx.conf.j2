@@ -9,10 +9,12 @@ server {
     client_max_body_size 4G;
     server_name {{ project_domain }};
 
+    {% if nginx_https %}
     # redirect to https
     if ($http_x_forwarded_proto = 'http') {
         return 301 https://{{ project_domain }}$request_uri;
     }
+    {% endif %}
 
     access_log      /var/log/nginx/{{ project_name }}.access.log main;
     error_log       /var/log/nginx/{{ project_name }}.error.log debug;
