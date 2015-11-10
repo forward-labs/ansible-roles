@@ -3,3 +3,7 @@
 - name: Restart nginx
   action: service name=nginx state=restarted
   sudo: true
+
+- name: Reload supervisor config
+  shell: supervisorctl update
+  sudo: true

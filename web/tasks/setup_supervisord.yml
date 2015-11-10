@@ -15,11 +15,13 @@
 - name: Copy supervisor local configuration
   template: src=local.supervisord.conf.j2 dest=/etc/supervisor/conf.d/{{ project_name }}.conf
   sudo: true
+  notify: Reload supervisor config
   when: local
 
 - name: Copy supervisor production configuration
   template: src=prod.supervisord.conf.j2 dest=/etc/supervisor/conf.d/{{ project_name }}.conf
   sudo: true
+  notify: Reload supervisor config
   when: not local
 
 - name: Copy supervisord systemd config
