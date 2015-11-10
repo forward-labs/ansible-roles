@@ -1,5 +1,5 @@
 [program:django]
-command=/data/env/{{ project_name }}/bin/python /data/env/{{ project_name }}/bin/gunicorn {{ app_name }}.wsgi -c /etc/gunicorn.conf
+command={% if newrelic %}/data/env/{{ project_name }}/bin/newrelic-admin run-program {% endif %}/data/env/{{ project_name }}/bin/python /data/env/{{ project_name }}/bin/gunicorn {{ app_name }}.wsgi -c /etc/gunicorn.conf
 directory=/data/www/{{ project_name }}
 environment={% for k,v in app_environment.iteritems() %}{{ k }}="{{ v }}",{% endfor %}
 
@@ -10,7 +10,7 @@ stdout_logfile=/var/log/{{ project_name }}/django.log
 redirect_stderr=true
 
 [program:celery]
-command=/data/env/{{ project_name }}/bin/celery -A {{ app_name }} worker --loglevel=INFO
+command={% if newrelic %}/data/env/{{ project_name }}/bin/newrelic-admin run-program {% endif %}/data/env/{{ project_name }}/bin/celery -A {{ app_name }} worker --loglevel=INFO
 directory=/data/www/{{ project_name }}
 environment={% for k,v in app_environment.iteritems() %}{{ k }}="{{ v }}",{% endfor %}
 
@@ -25,7 +25,7 @@ stopwaitsecs=600
 killasgroup=true
 
 [program:celerybeat]
-command=/data/env/{{ project_name }}/bin/celery -A {{ app_name }} beat
+command={% if newrelic %}/data/env/{{ project_name }}/bin/newrelic-admin run-program {% endif %}/data/env/{{ project_name }}/bin/celery -A {{ app_name }} beat
 directory=/data/www/{{ project_name }}
 environment={% for k,v in app_environment.iteritems() %}{{ k }}="{{ v }}",{% endfor %}
 
