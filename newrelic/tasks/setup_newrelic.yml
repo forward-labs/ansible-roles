@@ -1,0 +1,34 @@
+---
+
+- name: Check newrelic RPM repo installed
+  command: rpm -q newrelic-repo-5-3.noarch
+  register: rpm_check
+  changed_when: no
+  failed_when: rpm_check.rc > 1
+  sudo: true
+
+- name: Setup newrelic RPM repo
+  command: rpm -Uvh https://download.newrelic.com/pub/newrelic/el5/i386/newrelic-repo-5-3.noarch.rpm
+  when: rpm_check.stdout.find('is not installed') != -1
+  sudo: true
+
+- name: Install newrelic-sysmond
+  yum: name=newrelic-sysmond state=latest
+  sudo: true
+
+- name: Create the newrelic-sysmond config file
+  template: src=nrsysmond.cfg.j2 dest=/etc/newrelic/nrsysmond.cfg
+  sudo: true
+
+- name: Ensure newrelic-sysmond is running
+  service: name=newrelic-sysmond state=started enabled=true
+  sudo: true
+
+- name: Create the newrelic APM config file
+  template: src=newrelic.ini.j2 dest=/etc/newrelic.ini
+  sudo: true
+
+- name: Install newrelic APM python package
+  pip: name=newrelic virtualenv=/data/env/{{ project_name }}
+  sudo: true
+  sudo_user: "{{ project_user_username }}"
