@@ -1,0 +1,10 @@
+/var/log/{{ project_name }}/*.log {
+    daily
+    rotate 30
+    create 666 {{ project_user_username }} {{ project_user_group }}
+    dateext
+    compress
+    delaycompress
+    notifempty
+    missingok
+}
