@@ -32,6 +32,11 @@
   sudo: true
   file: path=/var/log/{{ project_name }}/ owner={{ project_user_username }} group={{ project_user_group }} state=directory recurse=yes
 
+- name: Copy logrotate configuration
+  template: src=project_logrotate.j2 dest=/etc/logrotate.d/{{ project_name }}_supervisord
+  sudo: true
+  when: not local
+
 - name: Ensure supervisord is running
   service: name=supervisor state=started enabled=true
   sudo: true
